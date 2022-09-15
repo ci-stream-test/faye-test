@@ -32,12 +32,12 @@ jobs:
         echo "ci.repo_url = ${{ ci.repo_url }}"
         echo "BK_CI_ATOM_VERSION = $BK_CI_ATOM_VERSION"
       continue-on-error: true
-    - uses: runScript@1.*
-      name: 脚本执行
-      with:
-        # 执行脚本, 必选
-        script: |
-          echo "BK_CI_ATOM_VERSION = $BK_CI_ATOM_VERSION"
+    # - uses: runScript@1.*
+    #   name: 脚本执行
+    #   with:
+    #     # 执行脚本, 必选
+    #     script: |
+    #       echo "BK_CI_ATOM_VERSION = $BK_CI_ATOM_VERSION"
     - name: event except mr
       run: |
         echo "ci.ref = ${{ ci.ref }}"
