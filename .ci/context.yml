@@ -1,0 +1,123 @@
+version: v2.0
+
+on:
+  push:
+    branches:
+      - "**"
+  mr:
+    target-branches:
+      - "**"
+
+jobs:
+  job_id_1:
+    steps:
+    - checkout: self
+      name: checkout the base repo
+      id: step_git
+      continue-on-error: true
+    - name: common trigger context
+      run: |
+        echo "ci.workspace = ${{ ci.workspace }}"
+        echo "ci.token = ${{ci.token}}"
+        echo "ci.pipeline_name = ${{ci.pipeline_name}}"
+        echo "ci.actor = ${{ci.actor}}"
+        echo "ci.build_id = ${{ci.build_id}} "
+        echo "ci.build_num = ${{ ci.build_num }}"
+        echo "ci.build_url = ${{ ci.build_url }}"
+        echo "ci.repo = ${{ ci.repo }}"
+        echo "ci.repo_name = ${{ ci.repo_name }}"
+        echo "ci.repo_group = ${{ ci.repo_group }}"
+        echo "ci.event = ${{ ci.event }}"
+        echo "ci.event_content = ${{ ci.event_content }}"
+        echo "ci.repo_url = ${{ ci.repo_url }}"
+        echo "BK_CI_ATOM_VERSION = $BK_CI_ATOM_VERSION"
+      continue-on-error: true
+    - uses: runScript@1.*
+      name: 脚本执行
+      with:
+        # 执行脚本, 必选
+        script: |
+          echo "BK_CI_ATOM_VERSION = $BK_CI_ATOM_VERSION"
+    - name: event except mr
+      run: |
+        echo "ci.ref = ${{ ci.ref }}"
+        echo "ci.branch is ${{ ci.branch }}"
+        echo "ci.sha = ${{ ci.sha }}"
+        echo "ci.sha_short = ${{ ci.sha_short }}"
+        echo "ci.commit_message = ${{ ci.commit_message }}"
+      continue-on-error: true
+    - name: on mr
+      run: |
+        echo "ci.head_ref = ${{ ci.head_ref }}"
+        echo "ci.base_ref = ${{ ci.base_ref }}"
+        echo "ci.mr_url = ${{ ci.mr_url }}"
+        echo "ci.head_url = ${{ ci.head_url }}"
+        echo "ci.base_url = ${{ ci.base_url }}"
+      continue-on-error: true
+    - run: |
+        echo "job.name = ${{ job.name }}"
+        echo "job.id = ${{ job.id }}"
+        echo "job.status = ${{ job.status }}"
+        echo "job.outcome = ${{ job.outcome }}"
+        echo "job.os = ${{ job.os }}"
+        echo "job.container.network = ${{ job.container.network }}"
+        # echo "job.services = ${{ job.services }}"
+        # echo "job.services.<service-id>.id = ${{ job.services.<service-id>.id }}"
+        # echo "job.services.<service-id>.ports = ${{ job.services.<service-id>.ports }}"
+        # # echo "job.services.<service-id>.ip = ${{ job.services.<service-id>.ip }}"
+        echo "job.stage_id = ${{ job.stage_id }}"
+        echo "job.stage_name = ${{ job.stage_name }}"
+      name: "job context"
+      id: "step-context"
+      if: ci.branch == master && steps.step_git.outputs.BK_CI_GIT_REPO_REF == master
+      continue-on-error: true
+    - run: |
+        echo "steps.step_git.name = ${{ steps.step_git.name}} "
+        echo "steps.step_git.id = ${{ steps.step_git.id}} "
+        echo "steps.step_git.outputs.BK_CI_GIT_REPO_BRANCH = ${{ steps.step_git.outputs.BK_CI_GIT_REPO_BRANCH }} "
+        echo "steps.step_git.status = ${{ steps.step_git.status}} "
+        echo "steps.step_git.outcome = ${{ steps.step_git.outcome}} "
+
+        echo "steps.step-context-step.name = ${{ steps.step-context-step.name}} "
+        echo "steps.step-context-step.id = ${{ steps.step-context-step.id}} "
+        echo "steps.step-context.status = ${{ steps.step-context.status}} "
+        echo "steps.step-context.outcome = ${{ steps.step-context.outcome}} "
+        echo "steps.step-context.task_id = ${{ steps.step-context.task_id}} "
+      name: "step context"
+      id: "step-context-step-1"
+      continue-on-error: true
+    - run: |
+        echo "settings.123.password = ${{ settings.123.password }}"
+        echo "settings.key_username_password.username = ${{ settings.key_username_password.username }}"
+        echo "settings.key_username_password.password = ${{ settings.key_username_password.password }}"
+      name: settings context
+      continue-on-error: true
+  job_id_2:
+    name: depend-on job_id_1
+    depend-on: 
+    - job_id_1
+    steps:
+    - run: |
+        echo "jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS=${{ jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS }}"
+      if: jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_REF
+  job_macos:
+    name: macos-10.15
+    runs-on: macos-10.15
+    depend-on: 
+    - job_id_1
+    steps:
+    - run: |
+        echo "jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS=${{ jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS }}"
+      if: jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_REF
+  job_win:
+    name: windows
+    runs-on:
+      self-hosted: true
+      pool-name: aaa
+      agent-selector: [ windows ]
+    depend-on: 
+    - job_id_1
+    steps:
+    - run: |
+        echo jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS=${{ jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS }}
+      if: jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_REF
