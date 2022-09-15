@@ -100,24 +100,24 @@ jobs:
     - run: |
         echo "jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS=${{ jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS }}"
       if: jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_REF
-  job_macos:
-    name: macos-10.15
-    runs-on: macos-10.15
-    depend-on: 
-    - job_id_1
-    steps:
-    - run: |
-        echo "jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS=${{ jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS }}"
-      if: jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_REF
-  job_win:
-    name: windows
-    runs-on:
-      self-hosted: true
-      pool-name: aaa
-      agent-selector: [ windows ]
-    depend-on: 
-    - job_id_1
-    steps:
-    - run: |
-        echo jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS=${{ jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS }}
-      if: jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_REF
+  # job_macos:
+  #   name: macos-10.15
+  #   runs-on: macos-10.15
+  #   depend-on: 
+  #   - job_id_1
+  #   steps:
+  #   - run: |
+  #       echo "jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS=${{ jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS }}"
+  #     if: jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_REF
+  # job_win:
+  #   name: windows
+  #   runs-on:
+  #     self-hosted: true
+  #     pool-name: aaa
+  #     agent-selector: [ windows ]
+  #   depend-on: 
+  #   - job_id_1
+  #   steps:
+  #   - run: |
+  #       echo jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS=${{ jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_COMMITS }}
+  #     if: jobs.job_id_1.steps.step_git.outputs.BK_CI_GIT_REPO_REF
