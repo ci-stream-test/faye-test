@@ -48,4 +48,4 @@ stages:
           echo "variables.var_3 is ${{ variables.var_3 }}"
           echo "variables.var_4 is ${{ variables.var_4 }}"
           echo "variables.var_5 is ${{ variables.var_5 }}"
-          echo "::set-gate-value name=pass_rate::0.9"
+          echo "::set-gate-value name=pass_rate::0.4"
