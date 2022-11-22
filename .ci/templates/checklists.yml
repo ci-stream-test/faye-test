@@ -1,0 +1,14 @@
+parameters:
+  - name: receivers
+    type: array
+    default: [ "${{ ci.actor }}" ]
+   
+gates:
+- name: 我是第1条红线
+  rule:
+  - run.pass_rate <= 0.5
+  notify-on-fail:
+  - type: email
+    receivers: ${{ parameters.receivers }}
+  continue-on-fail:
+    gatekeepers: ${{ parameters.receivers }}
