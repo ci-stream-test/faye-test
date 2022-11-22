@@ -1,0 +1,51 @@
+version: v2.0
+
+stages:
+- name: 生成红线指标
+  check-in:
+    reviews:
+      flows:
+        - name: flow 1 --- 这是测试负责人 
+          reviewers: ["fayewong-v5"]
+      variables:
+        var_1:
+          default: 1
+          label: 中文
+          type: SELECTOR
+          values: [1,2]
+          description: 这是个字段描述啊啊啊啊啊
+        var_2:
+            label: 变量二
+            type: BOOL
+        var_3:
+          label: 多选
+          type: SELECTOR-MULTIPLE
+          values: [1111, 大概多少给多少, rewwrwr]
+        var_4:
+          label: TEXTAREA
+          type: TEXTAREA
+        var_5:
+          label: INPUT
+          type: INPUT
+      description: |
+          说明下如何审核1
+          参数var_1如何取值111
+    timeout-hours: 10
+  check-out:
+    gates:
+      - template: checklists.yml
+        parameters:
+          receivers: ["fayewong-v5"]
+    timeout-hours: 9
+  jobs:
+    job_1:
+      steps:
+      - checkout: self
+      - run: |
+          echo "hello 11"
+          echo "variables.var_1 is ${{ variables.var_1 }}"
+          echo "variables.var_2 is ${{ variables.var_2 }}"
+          echo "variables.var_3 is ${{ variables.var_3 }}"
+          echo "variables.var_4 is ${{ variables.var_4 }}"
+          echo "variables.var_5 is ${{ variables.var_5 }}"
+          echo "::set-gate-value name=pass_rate::0.9"
